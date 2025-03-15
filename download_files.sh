@@ -6,9 +6,10 @@
 # Transfiler: Downloader v1.0.0
 # BASH version
 # Copyight 2025 VR51, Lee Hodson, Gemini Flash 2
+# GNU General Public License v3.0
 #
 # 1. Place this script on Server Two.
-# 2. Configure the settings that start at line 21.
+# 2. Configure the settings that start at line 22.
 # 3. Make the script executable: chmod +x download_files.sh
 # 4. Run the script: ./download_files.sh
 # 5. Or as a one-liner to download, make executable and run the script (Think: do you need to configure this?): wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/download_files.sh && chmod +x download_files.sh && ./download_files.sh
