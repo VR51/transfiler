@@ -1,6 +1,11 @@
 # Transfiler
-Web browser file transfer app. Index files on Server One, download files to Server Two. As simple and uncomplicated as can be.
-+ BASH versions of the indexer and the downloader.
+File transfer app: Index files on Server One, download files to Server Two. As simple and uncomplicated as can be.
+
+Project includes
+
++ Web version of a file indexer script and a downloader script.
++ BASH version of a file indexer script and a downloader script.
++ The web scripts and BASH scripts are interchangeable.
 
 # Instructions: Web Version
 
@@ -12,7 +17,31 @@ Web browser file transfer app. Index files on Server One, download files to Serv
 
 # Instructions: BASH Versions
 
-See heading **BASH Versions** near the bottom of this readme.
+See heading **BASH Versions** near the bottom of this readme for more info.
+
+**Transfiler: Indexer v1.0.0**
+
+1. Place the indexer script (index_files.sh) on Server One.
+2. Configure the settings that start at line 21 of the script: nano index_files.sh
+3. Make the script executable: chmod +x index_files.sh
+4. Run the script: ./index_files.sh
+5. Or as a one-liner to download, make executable and run the script: wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/index_files.sh && chmod +x index_files.sh && ./index_files.sh
+6. Answer a couple of questions
+7. Copying files? Copy the generated index file's name (not the link) and use it with 'Transfiler: Downloader', either the web version or the BASH version.
+8. Delete this script and its log files from your web server after use.
+9. The script does not need to be named index_files.sh. You can give it a different file name for security purposes.
+
+**Transfiler: Downloader v1.0.0**
+
+1. Place the downloader script (download_files.sh) on Server Two.
+2. Configure the settings that start at line 21.
+3. Make the script executable: chmod +x download_files.sh
+4. Run the script: ./download_files.sh
+5. Or as a one-liner to download, make executable and run the script (Think: do you need to configure this?): wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/download_files.sh && chmod +x download_files.sh && ./download_files.sh
+6. Answer a couple of questions
+7. Tell the script the name of the `index CSV file` built by 'Transfiler: Downloader', either the web version or the BASH version.
+8. Delete this script and its log files from your web server after use.
+9. The script does not need to be named download_files.sh. You can give it a different file name for security purposes.
 
 # Tip
 
