@@ -5,6 +5,7 @@
 /**
 * Transfiler: Indexer v1.0.0
 * Copyight 2025 VR51, Lee Hodson, Gemini Flash 2
+* GNU General Public License v3.0
 *
 * 1. Place this script on Server One.
 * 2. Configure the settings that start at line 26.
