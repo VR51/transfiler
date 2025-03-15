@@ -14,7 +14,7 @@
 # 5. Or as a one-liner to download, make executable and run the script: wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/index_files.sh && chmod 755 index_files.sh && ./index_files.sh
 # 6. Answer a couple of questions
 # 7. Copying files? Copy the generated index file's name (not the link) and use it with 'Transfiler: Downloader' either the web version or the BASH version.
-# 8. Delete this script from your web server after use.
+# 8. Delete this script and its log files from your web server after use.
 # 9. The script does not need to be named index_files.sh. You can give it a different file name for security purposes.
 ####
 
