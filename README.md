@@ -1,11 +1,15 @@
 # Transfiler
 File transfer app: Index files on Server One, download files to Server Two. As simple and uncomplicated as can be.
 
-Project includes
+# Project includes
 
 + Web version of a file indexer script and a downloader script.
 + BASH version of a file indexer script and a downloader script.
 + The web scripts and BASH scripts are interchangeable.
+
+# License
+
+GNU General Public License v3.0
 
 # Instructions: Web Version
 
