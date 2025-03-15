@@ -1,13 +1,22 @@
 # Transfiler
 Web browser file transfer app. Index files on Server One, download files to Server Two. As simple and uncomplicated as can be.
++ BASH versions of the indexer and the downloader.
 
-# Instructions
+# Instructions: Web Version
 
 * Script One: Transfiler: Indexer
 * Script Two : Transfiler: Downloader
 * Use script one -- the indexer -- to create an index of all files stored on a server or to create an index of all files with specified file extensions that live in the indexer script's directory and in sub directories thereof.
 * Use script two -- the downloader -- to download all files indexed by script one, the indexer. The downloader script downloads files and stores them in a recreated directory structure that mirrors the directory structure of the source server.
 * Script one goes on server one and script two goes on server two (or in a subdirectory of server one if copying select files from location A on server one to location B on server one).
+
+# Instructions: BASH Versions
+
+See heading **BASH Versions** near the bottom of this readme.
+
+# Tip
+
+The BASH and Web versions of these scripts are interchangeable: index_files.php can be used to create the file index and download_files.sh can be used to download files or, if preferred, index_files.sh can be used to create the index and download_files.php can be used to fetch the files. The scripts are interchangeabe. The CSV file structure is the same.
 
 # Use Cases
 
@@ -22,9 +31,7 @@ Web browser file transfer app. Index files on Server One, download files to Serv
 
 I made this script to help me move website files between servers. Mostly WordPress site files under wp-content/uploads. SSH works well but there are some origin servers that disconnect unexpectedly or that can't be logged into over SSH or they fail to create large zip files that can be transferred via wget or curl. I thought about making this script for years but only got around to it this weekend (today is March 15th, 2025). I thought this would be a good way to use AI to do most of the work for me. I am happy with the reuslt.
 
-A future release might see a less basic frontend, one that shows useful information about the file transfers. Right now, this script does what I need it to do. And it's simple to use.
-
-There is an BASH version of each of these scripts for use over SSH. I might release these publicly someday.
+A future release might see a less basic frontend for the web versions, one that shows useful information about the file transfers. Right now, this script does what I need it to do. And it's simple to use.
 
 # Known Limitations and Bugs
 
@@ -92,3 +99,58 @@ The download_files.php script (the Downloader) is a PHP application designed to 
 5.  **Specify the File:** Enter the name of the CSV file (not the link) in the `CSV File` field. This should be the CSV file created by the Indexer script.
 6.  **Specify the Location:** Enter the domain name (include the protocol, e.g HTTPS, and any subdirectories) in the `Remote URL` field. This should be the location of the CSV file created by the Indexer script.
 7.  **Download the Files:** Click the "Download Files" button.
+
+# BASH Versions
+
+**Key Changes and Explanations:**
+
+*   **Configuration Variables:** Added BASH array variables for `ALLOWED_EXTENSIONS`, `EXCLUDED_EXTENSIONS`, `DOWNLOADED_LOG_FILE`, `FAILED_LOG_FILE` and `ENABLE_EXTENSION_CHECK`.
+
+*   **`sanitize_filename` Function:** This is a BASH implementation, and will print the file name if successful, nothing if failure.
+
+*   **`download_file` Function:** This will print any filename that doesn't have the allowed file extensions.
+
+*   **`is_file_downloaded` Function:** Checks for duplicates with `grep` command and will prevent duplicated files.
+
+*    **`is_file_downloaded` Function:** This function checks a single filename to prevent duplication and will print those filenames.
+
+*   **The whole code will prompt the location, CSV filename and location.
+
+*   **Escaping Filenames:**
+*   **Counter** This counter increments when each file is properly downloaded from the Internet.
+*   **Check if Number of Files Exist**. To reduce looping and code, I first get the code with the "get_number_of_files()".
+
+**Summary of Script Function and Usage Instructions:**
+
+*   **`index_files.sh`:**
+This BASH script indexes files and directories within a specified directory, generating a CSV file.
+
+    1.  **Configuration:** Modify the `ALLOWED_EXTENSIONS`, `DISALLOWED_EXTENSIONS`, `ALLOWED_DIRECTORIES`, and `DISALLOWED_DIRECTORIES` arrays to define the desired inclusion/exclusion rules. Set `ENABLE_*` variables to control whether these rules are active.
+
+    2.  **Execution:** Run the script from the command line:
+        ```bash
+        ./index_files.sh
+        ```
+
+    3.  The script will create a CSV file named `index_YYYYMMDD_HHMMSS_random.csv` in the same directory.
+
+*   **`download_files.sh`:**
+
+Downloads files and directories from a remote server based on a CSV index file generated by `index_files.sh`.
+
+    1.  **Configuration:** Adjust `ALLOWED_EXTENSIONS`, `EXCLUDED_EXTENSIONS`, `DOWNLOADED_LOG_FILE`, and `ENABLE_EXTENSION_CHECK` variables as needed.
+
+    2.  **Execution:** Run the script from the command line:
+
+        ```bash
+        ./download_files.sh
+        ```
+
+    3.  The script will prompt you for:
+        *   The location of the `index_files.sh` script on the remote server.
+        *   The name of the CSV file.
+        *   The remote URL (base URL for downloads).
+
+    4.  The script will download the files and recreate the directory structure locally.  A `downloaded_files.log` file is created to track successfully downloaded items. A `failed_files.log` file is created for any failed file attempts.  An `ignored_files.log` is created if the EXCLUDED EXTENSION check is set to 1.
+
+Remember to make the scripts executable using `chmod +x index_files.sh download_files.sh`.
