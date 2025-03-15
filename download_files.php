@@ -6,9 +6,10 @@
 /**
 * Transfiler: Downloader v1.0.0
 * Copyight 2025 VR51, Lee Hodson, Gemini Flash 2
+* GNU General Public License v3.0
 *
 * 1. Place this script on Server Two (or in a subdirectory of Server One).
-* 2. Configure the settings that start at line 20.
+* 2. Configure the settings that start at line 21.
 * 3. Open a browser at [domain]/download_files.php (or if in a subdirctory go to [domain]/[subdirectory]/download_files.php).
 * 4. Fill in the form.
 * 5. Paste in the name of the index file (not the link) created by the Indexer script.
