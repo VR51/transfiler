@@ -11,7 +11,7 @@
 # 2. Configure the settings that start at line 21.
 # 3. Make the script executable: chmod 755 index_files.sh
 # 4. Run the script: ./index_files.sh
-# 5. Or as a one-liner to download, make executable and run the script: wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/index_files.sh && chmod 755 index_files.sh && ./index_files.sh
+# 5. Or as a one-liner to download, make executable and run the script: wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/index_files.sh && chmod +x index_files.sh && ./index_files.sh
 # 6. Answer a couple of questions
 # 7. Copying files? Copy the generated index file's name (not the link) and use it with 'Transfiler: Downloader' either the web version or the BASH version.
 # 8. Delete this script and its log files from your web server after use.
