@@ -58,15 +58,15 @@ The BASH and Web versions of these scripts are interchangeable: index_files.php 
 
 # Author's Note
 
-I made this script to help me move website files between servers. Mostly WordPress site files under wp-content/uploads. SSH works well but there are some origin servers that disconnect unexpectedly or that can't be logged into over SSH or they fail to create large zip files that can be transferred via wget or curl. I thought about making this script for years but only got around to it this weekend (today is March 15th, 2025). I thought this would be a good way to use AI to do most of the work for me. I am happy with the reuslt.
+I made this script to help me move website files between servers. Mostly WordPress site files under wp-content/uploads. SSH works well but there are some origin servers that disconnect unexpectedly or that can't be logged into over SSH or they fail to create large zip files that can be transferred via wget or curl. I thought about making this script for years but only got around to it this weekend (today is March 15th, 2025). I thought this would be a good way to use AI to do most of the work for me. I am happy with the result.
 
 A future release might see a less basic frontend for the web versions, one that shows useful information about the file transfers. Right now, this script does what I need it to do. And it's simple to use.
 
 # Known Limitations and Bugs
 
-* PHP files and other script files that servers restrict public access to are not downloaded by the downloader script. The script can (well, will) rereate them as empty files if they their extensions are not in the indexer scripts list of excluded file extensions.
-* When the download script completes its run, instead of showing a success message it shows the error message **AJAX Error: SyntaxError: Unexpected token '<', "**. Check the log files. The transfer probably completed successfully if the size of the downloaded_files.log on Server Two matches the size of the file_index log on server one and provided they both contain the same number of lines. Solution: Compare logs or use the indexer script on server two to create a file index to compare with the index on server one.
-* The file counter on the Downloader web page does not work. Well, it doesn't work for me. Let me know if it works for you or if you get it to work. Use the GitHub Issues forum to report back.
+* PHP files and other script files that servers restrict public access to are not downloaded by the downloader script. The script can (well, will) recreate non downloadble files as empty files bearing the file name with 0 file size and 0 content. To stop non downloadble files (i.e. protected files) being recreated on Server Two, add the protected file extensions to the indexer script's list of excluded file extensions or add their extensions to the downloader scripts list of disallowed extensions. Files with the an excluded extension will be ignored by the indexer or the downloader.
+* Affects PHP/Web downloader. When the web downloader script completes its run, instead of showing a success message it shows the error message **AJAX Error: SyntaxError: Unexpected token '<', "**. Tip: Check the log files. The transfer probably completed successfully if the size of the downloaded_files.log on Server Two matches the size of the file_index log on Server One. Confirm they both contain the same number of lines. You could use the indexer script on Server Two to create a file index to compare with the index on server one.
+* Affects the web downloader: The file counter on the Downloader web page does not work. Well, it doesn't work for me. Let me know if it works for you or if you get it to work. Use the GitHub Issues forum to report back.
 
 # Transfiler: Indexer
 
