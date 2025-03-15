@@ -24,6 +24,8 @@ I made this script to help me move website files between servers. Mostly WordPre
 
 A future release might see a less basic frontend, one that shows useful information about the file transfers. Right now, this script does what I need it to do. And it's simple to use.
 
+There is an BASH version of each of these scripts for use over SSH. I might release these publicly someday.
+
 # Known Limitations and Bugs
 
 * PHP files and other script files that servers restrict public access to are not downloaded by the downloader script. The script can (well, will) rereate them as empty files if they their extensions are not in the indexer scripts list of excluded file extensions.
