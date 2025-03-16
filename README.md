@@ -54,11 +54,11 @@ See heading **BASH Versions** near the bottom of this readme for more info.
 3. Place this script on your web server then make it executable i.e. chmod +x compare_logs.sh
 4. Or as a one-liner wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/compare_logs.sh && chmod +x compare_logs.sh
 5. Compare two log files. The script accepts the log files as arguments:
-   --- Save both log files into the same directory that stores this script then run the script
-   --- ./compare_logs.sh log_file_a log_file_b
-7. The log file is created as log_differences_[YYYYMMDD_HHMMSS].csv
-8. Read the output file e.g. nano log_differences_*.csv (where the blob (*) represents the date)
-9. Delete this script and its log files from your web server after use.
+6. Save both log files into the same directory that stores this script then run the script
+7. `./compare_logs.sh log_file_a log_file_b`
+8. The log file is created as log_differences_[YYYYMMDD_HHMMSS].csv
+9. Read the output file e.g. nano log_differences_*.csv (where the blob (*) represents the date)
+10. Delete this script and its log files from your web server after use.
 
 # Tip
 
