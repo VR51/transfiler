@@ -10,7 +10,7 @@
 # 1. Use this script to compare two file index log files.
 # 2. Create an index of server files and directories on Server One and an index of files and directories on Server Two using index_files.sh or index_files.php.
 # 3. Place this script on your web server then make it executable i.e. chmod +x compare_logs.sh
-# 4. Or as a one-liner wget && chmod +x compare_logs.sh
+# 4. Or as a one-liner wget https://raw.githubusercontent.com/VR51/transfiler/refs/heads/main/compare_logs.sh && chmod +x compare_logs.sh
 # 5. Compare two log files. The script accepts the log files as arguments:
 # --- Save both log files into the same directory that stores this script then run the script
 # --- ./compare_logs.sh log_file_a log_file_b
