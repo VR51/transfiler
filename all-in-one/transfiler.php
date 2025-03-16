@@ -2,17 +2,12 @@
 // Security:  Always sanitize and validate input!
 // Ensure only authorized users can access this script.
 
-// Configuration Settings (Can be adjusted via the web form)
-$allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'csv']; // Example allowed extensions
-$enable_extension_check = true;  // Set to false to disable extension check
-$max_file_size = 10485760; // 10MB in bytes
-$allowed_mime_types = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv']; // Example mime types
-
-// New:  Excluded file extensions
+// *** Configuration Settings (Can be adjusted via the web form) ***
+$allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'csv']; // Example allowed extensions
 $excluded_extensions = ['php', 'exe', 'sh'];
-
-//List of allowed file extensions for the log comparitor
 $allowed_file_types = ['text/csv', 'text/plain'];
+$allowed_directories = ['wp-content'];
+$disallowed_directories = ['.git', 'node_modules', 'cache', 'wp-content/themes', 'wp-content/plugins', 'wp-content/litespeed', 'wp-content/upgrade', 'wp-content/upgrade-temp-backup'];
 
 // *** Functions (Indexer, Downloader, Comparator) ***
 
@@ -67,7 +62,7 @@ function safe_file_put_contents($filename, $content, $flags = 0) {
 }
 
 // Function to generate CSV data for the indexer
-function generate_csv_data($directory, $allowed_extensions, $excluded_extensions, $enable_extension_check) {
+function generate_csv_data($directory, $allowed_extensions, $excluded_extensions, $enable_extension_check, $allowed_directories, $disallowed_directories, $enable_allowed_directories, $enable_disallowed_directories) {
     $data = [];
     $data[] = "Name,Relative Path,Type,Size"; // CSV Header
     $dir_iterator = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
@@ -235,7 +230,17 @@ switch ($action) {
             break;
         }
 
-        $csv_data = generate_csv_data($path, $allowed_extensions, $excluded_extensions, $enable_extension_check);
+        #Retrieve posted settings.
+        $path = htmlspecialchars($path); #Sanitize output to the HTML.
+        $allowed_extensions = isset($_POST["allowed_extensions"]) ? array_map('htmlspecialchars', explode(",",$_POST["allowed_extensions"])) : []; #Sanitize output for HTML.
+        $excluded_extensions = isset($_POST["excluded_extensions"]) ? array_map('htmlspecialchars', explode(",",$_POST["excluded_extensions"])) : [];  #Sanitize output for HTML.
+        $enable_extension_check = isset($_POST["enable_extension_check"]) ? true : false;
+        $allowed_directories = isset($_POST["allowed_directories"]) ? array_map('htmlspecialchars', explode(",",$_POST["allowed_directories"])) : []; #Sanitize output for HTML.
+        $disallowed_directories = isset($_POST["disallowed_directories"]) ? array_map('htmlspecialchars', explode(",",$_POST["disallowed_directories"])) : []; #Sanitize output for HTML.
+        $enable_allowed_directories = isset($_POST["enable_allowed_directories"]) ? true : false;
+        $enable_disallowed_directories = isset($_POST["enable_disallowed_directories"]) ? true : false;
+
+        $csv_data = generate_csv_data($path, $allowed_extensions, $excluded_extensions, $enable_extension_check, $allowed_directories, $disallowed_directories, $enable_allowed_directories, $enable_disallowed_directories);
         $filename = "index_" . date("Ymd_His") . "_" . uniqid() . ".csv";
         $filepath = __DIR__ . "/" . $filename;
         safe_file_put_contents($filepath, $csv_data);
@@ -252,6 +257,11 @@ switch ($action) {
           $result = "Remote Url not in proper format";
           break;
         }
+
+        #Retrieve posted settings
+        $allowed_extensions = isset($_POST["allowed_extensions"]) ? explode(",",$_POST["allowed_extensions"]) : [];
+        $excluded_extensions = isset($_POST["excluded_extensions"]) ? explode(",",$_POST["excluded_extensions"]) : [];
+        $enable_extension_check = isset($_POST["enable_extension_check"]) ? true : false;
 
         $csv_data = download_csv($remote_url . "/" . $csv_file);
         $data = download_files($csv_data, $remote_url, $allowed_extensions, $excluded_extensions, $enable_extension_check);
@@ -298,12 +308,14 @@ switch ($action) {
         #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
         #functions {margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;}
         .php-result {margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;}
+        .form-result {margin-top: 10px; padding: 10px; border: 1px solid #ccc;}
+        .form-field {margin-bottom: 5px;}
     </style>
     <script>
         $(document).ready(function() {
             // Generic form submission function
             function submitForm(formId, action) {
-                $("#result").empty(); // Clear previous results
+                $(formId + " .form-result").empty(); // Clear previous results
                 var formData = new FormData($(formId)[0]);
                 formData.append("action", action);
 
@@ -315,10 +327,14 @@ switch ($action) {
                     processData: false,
                     dataType: "html",
                     success: function(data) {
-                        $("#result").html(data);
+                        $(formId + " .form-result").html(data); // Place result under the form
+                        //Scroll to result
+                        $('html, body').animate({
+                          scrollTop: $(formId + " .form-result").offset().top
+                        }, 500);
                     },
                     error: function(xhr, status, error) {
-                        $("#result").html("<p>AJAX Error: " + error + "</p>");
+                        $(formId + " .form-result").html("<p>AJAX Error: " + error + "</p>");
                     }
                 });
             }
@@ -346,29 +362,92 @@ switch ($action) {
         <div id="functions">
           <h2>Function List</h2>
           <h3>Indexer</h3>
-          <p>To download, click on the Download Button.</p>
+          <p>Function creates a CSV index of the file structure that you provide in the path.</p>
           <h3>Downloader</h3>
-          <p>To view the differences, click on the file differences form. This script will be a single report of file differences.</p>
+          <p>Function downloads a list of files based on a file log.</p>
           <h3>Comparator</h3>
+          <p>Function is used to check the differences between the downloaded files and the original.</p>
         </div>
         <form id="indexerForm" enctype="multipart/form-data">
             <h2>Generate File Index</h2>
-            Path to index: <input type="text" id="path" name="path" value="<?php echo htmlspecialchars(__DIR__); ?>"><br>
+            <div class="form-field">
+              Path to index: <input type="text" id="path" name="path" value="<?php echo htmlspecialchars(__DIR__); ?>">
+              <small>Specify the directory to index.</small>
+            </div>
+            <div class="form-field">
+              <label for="allowed_extensions">Allowed File Extensions:</label>
+              <input type="text" id="allowed_extensions" name="allowed_extensions" value="<?php echo htmlspecialchars(implode(",", $allowed_extensions)); ?>">
+              <small>Comma-separated list (e.g., html,css,js). Leave blank to allow all.</small>
+            </div>
+            <div class="form-field">
+              <label for="excluded_extensions">Excluded File Extensions:</label>
+              <input type="text" id="excluded_extensions" name="excluded_extensions" value="<?php echo htmlspecialchars(implode(",", $excluded_extensions)); ?>">
+              <small>Comma-separated list of extensions to exclude (e.g., php,exe). </small>
+            </div>
+            <div class="form-field">
+              <label for="allowed_directories">Allowed Directories:</label>
+              <input type="text" id="allowed_directories" name="allowed_directories" value="<?php echo htmlspecialchars(implode(",", $allowed_directories)); ?>">
+              <small>Comma-separated list of allowed directories. Leave blank to allow all.</small>
+            </div>
+            <div class="form-field">
+              <label for="disallowed_directories">Disallowed Directories:</label>
+              <input type="text" id="disallowed_directories" name="disallowed_directories" value="<?php echo htmlspecialchars(implode(",", $disallowed_directories)); ?>">
+              <small>Comma-separated list of directories to exclude (e.g., cache,tmp).</small>
+            </div>
+            <div class="form-field">
+              <input type="checkbox" id="enable_extension_check" name="enable_extension_check" value="true" <?php if($enable_extension_check) echo "checked";?>>
+              <label for="enable_extension_check">Enable Extension Check</label>
+            </div>
+            <div class="form-field">
+              <input type="checkbox" id="enable_allowed_directories" name="enable_allowed_directories" value="true" <?php if($enable_allowed_directories) echo "checked";?>>
+              <label for="enable_allowed_directories">Enable Allowed Directories</label>
+            </div>
+            <div class="form-field">
+              <input type="checkbox" id="enable_disallowed_directories" name="enable_disallowed_directories" value="true" <?php if($enable_disallowed_directories) echo "checked";?>>
+              <label for="enable_disallowed_directories">Enable Disallowed Directories</label>
+            </div>
             <button type="submit">Generate Index</button>
+            <div class="form-result"></div>
         </form>
 
         <form id="downloaderForm" enctype="multipart/form-data">
-            <h2>Download Files</h2>
-            CSV File URL: <input type="text" id="csv_file" name="csv_file"><br>
-            Remote URL: <input type="text" id="remote_url" name="remote_url"><br>
-            <button type="submit">Download Files</button>
+            <h2>Transfer Files</h2>
+            <div class="form-field">
+                CSV File URL: <input type="text" id="csv_file" name="csv_file">
+                <small>Enter the full URL of the CSV file.</small>
+            </div>
+            <div class="form-field">
+                Remote URL: <input type="text" id="remote_url" name="remote_url">
+                <small>Enter the base URL for downloads.</small>
+            </div>
+            <div class="form-field">
+              <label for="allowed_extensions">Allowed File Extensions:</label>
+              <input type="text" id="allowed_extensions" name="allowed_extensions" value="<?php echo htmlspecialchars(implode(",", $allowed_extensions)); ?>">
+              <small>Comma-separated list (e.g., html,css,js). Leave blank to allow all.</small>
+            </div>
+            <div class="form-field">
+              <label for="excluded_extensions">Excluded File Extensions:</label>
+              <input type="text" id="excluded_extensions" name="excluded_extensions" value="<?php echo htmlspecialchars(implode(",", $excluded_extensions)); ?>">
+              <small>Comma-separated list of extensions to exclude (e.g., php,exe). </small>
+            </div>
+            <div class="form-field">
+              <input type="checkbox" id="enable_extension_check" name="enable_extension_check" value="true" <?php if($enable_extension_check) echo "checked";?>>
+              <label for="enable_extension_check">Enable Extension Check</label>
+            </div>
+            <button type="submit">Transfer Files</button>
+            <div class="form-result"></div>
         </form>
 
         <form id="comparatorForm" enctype="multipart/form-data">
             <h2>Compare Log Files</h2>
-            Log File A: <input type="file" id="log_file_a" name="log_file_a"><br>
-            Log File B: <input type="file" id="log_file_b" name="log_file_b"><br>
+            <div class="form-field">
+                Log File A: <input type="file" id="log_file_a" name="log_file_a">
+            </div>
+            <div class="form-field">
+                Log File B: <input type="file" id="log_file_b" name="log_file_b">
+            </div>
             <button type="submit">Compare Logs</button>
+            <div class="form-result"></div>
         </form>
 
         <div id="result">
