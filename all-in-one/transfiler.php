@@ -11,6 +11,11 @@ $disallowed_directories = ['.git', 'node_modules', 'cache', 'wp-content/themes',
 
 // *** Functions (Indexer, Downloader, Comparator) ***
 
+//Helper function to load the page quickly.
+function printResult ($action, $message) {
+  return "<div id='$action-result' class='form-result'><p>$message</p></div>";
+}
+
 //Function used to download from a remote location
 function download_csv($remote_url){
   $ch = curl_init($remote_url);
@@ -237,6 +242,7 @@ switch ($action) {
         $enable_extension_check = isset($_POST["enable_extension_check"]) ? true : false;
         $allowed_directories = isset($_POST["allowed_directories"]) ? array_map('htmlspecialchars', explode(",",$_POST["allowed_directories"])) : []; #Sanitize output for HTML.
         $disallowed_directories = isset($_POST["disallowed_directories"]) ? array_map('htmlspecialchars', explode(",",$_POST["disallowed_directories"])) : []; #Sanitize output for HTML.
+
         $enable_allowed_directories = isset($_POST["enable_allowed_directories"]) ? true : false;
         $enable_disallowed_directories = isset($_POST["enable_disallowed_directories"]) ? true : false;
 
@@ -315,10 +321,8 @@ switch ($action) {
         $(document).ready(function() {
             // Generic form submission function
             function submitForm(formId, action) {
-                $(formId + " .form-result").empty(); // Clear previous results
                 var formData = new FormData($(formId)[0]);
                 formData.append("action", action);
-
                 $.ajax({
                     type: "POST",
                     url: "transfiler.php",
@@ -327,11 +331,7 @@ switch ($action) {
                     processData: false,
                     dataType: "html",
                     success: function(data) {
-                        $(formId + " .form-result").html(data); // Place result under the form
-                        //Scroll to result
-                        $('html, body').animate({
-                          scrollTop: $(formId + " .form-result").offset().top
-                        }, 500);
+                        $(formId + " .form-result").html(data); //Display success below the form
                     },
                     error: function(xhr, status, error) {
                         $(formId + " .form-result").html("<p>AJAX Error: " + error + "</p>");
@@ -363,9 +363,9 @@ switch ($action) {
           <h2>Function List</h2>
           <h3>Indexer</h3>
           <p>Function creates a CSV index of the file structure that you provide in the path.</p>
-          <h3>Downloader</h3>
+          <h3>Transfer Files</h3>
           <p>Function downloads a list of files based on a file log.</p>
-          <h3>Comparator</h3>
+          <h3>Compare Log Files</h3>
           <p>Function is used to check the differences between the downloaded files and the original.</p>
         </div>
         <form id="indexerForm" enctype="multipart/form-data">
@@ -407,7 +407,7 @@ switch ($action) {
               <label for="enable_disallowed_directories">Enable Disallowed Directories</label>
             </div>
             <button type="submit">Generate Index</button>
-            <div class="form-result"></div>
+            <div id="indexerForm-result" class="form-result"></div>
         </form>
 
         <form id="downloaderForm" enctype="multipart/form-data">
@@ -435,7 +435,7 @@ switch ($action) {
               <label for="enable_extension_check">Enable Extension Check</label>
             </div>
             <button type="submit">Transfer Files</button>
-            <div class="form-result"></div>
+            <div id="downloaderForm-result" class="form-result"></div>
         </form>
 
         <form id="comparatorForm" enctype="multipart/form-data">
@@ -447,7 +447,7 @@ switch ($action) {
                 Log File B: <input type="file" id="log_file_b" name="log_file_b">
             </div>
             <button type="submit">Compare Logs</button>
-            <div class="form-result"></div>
+            <div id="comparatorForm-result" class="form-result"></div>
         </form>
 
         <div id="result">
