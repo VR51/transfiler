@@ -7,13 +7,14 @@
 * Copyight 2025 VR51, Lee Hodson, Gemini Flash 2
 * GNU General Public License v3.0
 *
-* 1. Use this script to compare two file index log files.
+* 1. Use this script to compare two file index logs.
 * 2. Create an index of server files and directories on Server One and on Server Two (usually after transfer) using index_files.php or index_files.sh.
 * 3. Place this script on your web server then access it at [domain]/compare_logs.php.
 * 4. Fill in the form.
 * 7. Click the Compare Logs button.
 * 8. Download the diff log and analyise it in a spreadsheet.
 * 9. Delete this script and its log files from your web server after use. If you leave it in place someone else might use it to force your server to continuously download files which would take up a lot of resources.
+* 10. This script must be saved as compare_logs.php otherwise the AJAX callback address hardcoded into the script must be amended.
 */
 
 //Configuration settings
